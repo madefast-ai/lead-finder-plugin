@@ -1,6 +1,6 @@
 ---
 name: lead-finder
-description: Lead Finder's working method in a folder on the user's computer. Use whenever the user wants to find leads or prospects (LinkedIn, Reddit, Instagram), keep or pick leads, save them to their lead workbook, research a lead, draft outreach or follow-ups, update a lead's status, see follow-ups due, import or export a leads spreadsheet, check saved topics, or remove a person. Works with the Lead Finder connector (tools such as my_account, search_linkedin_people, get_results).
+description: Lead Finder's working method in a folder on the user's computer. Use whenever the user wants to find leads or prospects (LinkedIn, Reddit, Instagram), keep or pick leads, save them to their lead workbook, research a lead, draft outreach or follow-ups, update a lead's status, see follow-ups due, import or export a leads spreadsheet, check saved topics or remove a person. Works with the Lead Finder connector (tools such as my_account, search_linkedin_people, get_results).
 ---
 
 # Lead Finder
