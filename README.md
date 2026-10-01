@@ -5,7 +5,7 @@ Find B2B leads on LinkedIn, Reddit and Instagram from Claude (Cowork, Desktop, C
 ## Install
 
 1. Get a Lead Finder account: https://leadfinder.madefast.dev (sign in with your email, accept the terms, add your Apify token).
-2. In Claude Desktop: **Customize → Plugins → Add marketplace**, enter `madefast-ai/lead-finder-plugin`, then install **Lead Finder**.
+2. In Claude Desktop: **Customize → Plugins → Add marketplace → Add from a repository**, enter `madefast-ai/lead-finder-plugin`, then install **Lead Finder**.
 3. Open the plugin's **Connectors** tab and click **Connect**; sign in with the same email.
    If Connect stays greyed out, add it by hand: **Customize → Connectors → Add custom connector**, URL `https://leadfinder.madefast.dev/mcp`.
 4. In Cowork, pick a folder for your leads and type `/leads:setup`.

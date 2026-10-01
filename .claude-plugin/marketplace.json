@@ -8,7 +8,7 @@
       "name": "leads",
       "source": "./leads",
       "description": "Lead Finder: find B2B leads on LinkedIn, Reddit and Instagram, keep them in a workbook on your computer, draft outreach and track follow-ups.",
-      "version": "2.1.0"
+      "version": "2.1.1"
     }
   ]
 }

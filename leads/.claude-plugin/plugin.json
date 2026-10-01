@@ -1,7 +1,7 @@
 {
   "name": "leads",
   "displayName": "Lead Finder",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Find B2B leads on LinkedIn, Reddit and Instagram through your own Apify account, keep them in a workbook in your folder, draft outreach and track follow-ups. Nothing is ever sent for you.",
   "author": { "name": "Madefast", "url": "https://leadfinder.madefast.dev" },
   "homepage": "https://leadfinder.madefast.dev",
