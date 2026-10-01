@@ -181,6 +181,6 @@ The connector talks to `https://leadfinder.madefast.dev/mcp` and signs you in wi
 
 ## Support
 
-Questions or problems: **contact@overbuilt.ro**
+Questions or problems: **hello@madefast.dev**
 
 Lead Finder is built by [Madefast](https://madefast.dev) and operated by Overbuilt Studio SRL, Bucuresti, Romania.
