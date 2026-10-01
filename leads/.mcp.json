@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "lead-finder": {
+      "type": "http",
+      "url": "https://leadfinder.madefast.dev/mcp"
+    }
+  }
+}
