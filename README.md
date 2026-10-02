@@ -131,7 +131,7 @@ In the workbook you can edit status, notes and drafts freely. Lead Finder merges
 
 | | Basic | Pro |
 |---|---|---|
-| New leads per 7 days | 25 | 500 |
+| New leads per 7 days | 25 | 200 |
 | Every feature above | ✓ | ✓ |
 
 Only new people found by a search count. Research, imports and people you've already seen don't. Pro is available only to Pro members of the Skool community; your account page shows how to get it, your plan and what's left this week. Searches use your own Apify credit on both plans.
@@ -183,4 +183,4 @@ The connector talks to `https://leadfinder.madefast.dev/mcp` and signs you in wi
 
 Questions or problems: **hello@madefast.dev**
 
-Lead Finder is built by [Madefast](https://madefast.dev) and operated by Overbuilt Studio SRL, Bucuresti, Romania.
+Lead Finder is built by [Madefast](https://madefast.dev).
