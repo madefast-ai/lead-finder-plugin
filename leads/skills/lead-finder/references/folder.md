@@ -9,16 +9,16 @@ campaigns/
   <campaign-slug>.md
 topics.md
 offers/
-  <lead-key>.md        offer cards for individual leads
+  <lead-key>.md        the offer for one lead, as sent
 templates/
-  connection-note.md
-  after-connect.md
-  cold-email.md
-  follow-up-message.md
-  follow-up-email.md
-  reddit-reply.md
-  instagram-dm.md
-  free-report-*.md
+  linkedin-comment.md
+  reddit-comment.md
+  instagram-comment.md
+  connection-request.md
+  reply-to-message.md
+  offer-message.md
+  offer-follow-up.md
+  call-recap.md
 leads/
   <campaign-slug>.xlsx
 imports/
@@ -36,44 +36,45 @@ Write this once (adapt the names):
 
 This folder is your lead database. Claude reads and updates it with the Lead Finder plugin.
 
-- offer.md: what you sell. campaigns/: who you target. topics.md: phrases to check on demand.
-- leads/*.xlsx: one workbook per campaign. Edit status, notes and drafts freely; Summary, Follow-ups and Pipeline are rebuilt automatically.
+- offer.md: what you sell. campaigns/: who you target. topics.md: phrases to check on demand. offers/: the offer you sent each lead.
+- leads/*.xlsx: one workbook per campaign. Edit status, notes and drafts freely; Summary, Next touches and Pipeline are rebuilt automatically.
+- Engage in public first (comments, reactions). Write privately only to people who've interacted with you.
 - The Lead Finder server keeps search results for 12 hours only. What you keep lives here, and is your responsibility: keep it secure, delete people who ask, don't share it.
-- Tell every person you contact where you found their details and how to opt out.
 ```
 
 ## offer.md
 
-A mirror of the offer saved on the Lead Finder server (`get_offer` returns it as Markdown). Build and change it with the `offer-builder` skill, which saves to the server and rewrites this file; don't edit it by hand. It looks like:
-
-```markdown
-# Offer
-
-## What we sell
-One or two sentences, in the customer's words.
-
-## Who it's for
-Company types, sizes, roles that buy, roles that use it.
-
-## The problem it solves
-The pain, as the buyer would describe it.
-
-## Proof
-Customers, results with numbers, testimonials. Only true things.
-
-## Call to action
-The low-effort next step: a 20-minute call, a free audit, a report, a trial.
-
-## Sender
-Name, role, company, website. Signature for emails (with an opt-out line).
-
-## Languages
-Which languages outreach is written in, and formal or informal address.
-```
+A mirror of the offer saved on the Lead Finder server (`get_offer` returns it as Markdown). Build and change it with the `offer-builder` skill, which saves to the server and rewrites this file; don't edit it by hand. Sections: who it's for, the result they want, problems solved, what's included (with durations), price and terms, proof, guarantee, what happens quickly, what they don't have to do, bonuses, real limits, on the call (anchor, Option A, Option B, fallback), next step, sender, languages.
 
 ## offers/<lead-key>.md
 
-One offer card per lead (the key with `:` replaced by `-`, e.g. `linkedin-pub-olivia-hart.md`): their goal in their words, the likely objection, what answers it, the first-touch offer, the angle, the next step, and the messages sent, newest last.
+The offer for one lead (the key with `:` replaced by `-`, e.g. `linkedin-pub-olivia-hart.md`), written by the `offer` skill:
+
+```markdown
+# Offer for Olivia Hart · Linden Knitwear
+
+Status: sent 2 Oct on LinkedIn · 4,200 EUR
+
+## Her goal
+"A site that keeps up with drop days" (her message, 30 Sep)
+
+## What's included for Linden
+- Store rebuild on Shopify, checkout set up for launch traffic · 6 weeks
+- Migration of products, customers and redirects
+- Launch-day monitoring for the spring drop
+
+## Price
+4,200 EUR one-off · 50% upfront, 50% at launch
+
+## Why it'll work for her
+Harbour & Co grew conversion 38% after the rebuild. If the store isn't live in 8 weeks, we work for free until it is.
+
+## For the call
+Anchor: Rebuild + 12 months of growth, 14,000 EUR. Option A: 3 payments of 1,400 EUR. Option B: without the redesign and monitoring, 2,600 EUR.
+
+## Messages
+(The offer message and any follow-ups, newest last.)
+```
 
 ## campaigns/<slug>.md
 
@@ -87,8 +88,8 @@ Status: active
 ## Ideal customer
 Roles, seniority, company size, industries, locations. Who to exclude (customers, competitors, partners).
 
-## Angle
-Why this segment, now. The hook for the first message.
+## Where they talk
+The topics they post about, the subreddits and hashtags they use: where to engage with them.
 
 ## Searches that work
 - LinkedIn people: titles [...], seniority [...], locations [...], industries [...]
@@ -97,20 +98,20 @@ Why this segment, now. The hook for the first message.
 - Instagram: #hashtag, "keywords"
 
 ## Exclude
-Company links or names never to contact.
+Company links or names never to engage with.
 
 ## Learnings
-What the user marked as good or bad fits, and why (use it in later scores and filters).
+What the user marked as good or bad fits, what got people to engage back, and why (use it in later scores and suggestions).
 ```
 
-Update "Searches that work" and "Learnings" as you go: when the user says "more like this" or "less like this", write the reason there.
+Update "Searches that work" and "Learnings" as you go.
 
 ## topics.md
 
 ```markdown
 # Saved topics
 
-Checked only when I ask ("check my topics").
+Checked only when I ask ("check my topics"), or by a routine.
 
 ## <Topic name>
 Campaign: <slug>
@@ -126,18 +127,18 @@ One file per template. Frontmatter plus the text, with placeholders:
 
 ```markdown
 ---
-name: Connection note
-channel: connection_note      # connection_note | message | inmail | email | reddit_reply | reddit_dm | instagram_dm
-purpose: first_touch          # first_touch | after_connect | follow_up
+name: LinkedIn comment
+channel: linkedin_comment     # linkedin_comment | linkedin_connect | linkedin_message | reddit_comment | reddit_dm | instagram_comment | instagram_dm | email
+purpose: engage               # engage | conversation | offer | follow_up | call
 language: English
 subject:                      # emails only
 source: starter pack          # or: user, or the tool that made it
 ---
-Hi {{first_name}}, {{personal_hook}}. I work with teams like {{company}} on {{pain}}. Happy to connect.
+{{specific_detail_from_their_post}}: {{your_point_or_experience}}. {{a_real_question_about_their_situation}}
 
-Notes: Fit 200 characters (300 on Premium). No pitch, no link.
+Notes: …
 ```
 
-Placeholders: `{{first_name}}`, `{{salutation}}` (formal address in the template's language, only when the profile makes it clear, else the full name), `{{company}}`, `{{role}}`, `{{personal_hook}}` (one specific, true detail from their profile, post or comment), `{{pain}}`, `{{proof}}`, `{{call_to_action}}`, `{{sender_name}}`, `{{sender_company}}`, `{{data_source_note}}` (the opt-out line from outreach.md), `{{username}}` and `{{subreddit}}` (Reddit), `{{helpful_answer}}` (a genuine answer to their question), and for free-report templates `{{report_link}}`, `{{report_finding}}`, `{{report_quick_wins}}`, `{{report_quick_win}}` (from the lead's notes or the campaign file; never invent numbers).
+Placeholders describe what goes there in plain words (`{{answer_to_what_they_said}}`, `{{price_and_how_they_pay}}`). Fill them from the lead's row (their posts, the interaction log, what they said) and the saved offer; never invent numbers or results.
 
-Templates from another tool (for example a message-writing connector): save them as-is into `templates/` with `source: <tool name>`, and put their drafts in the workbook's draft columns.
+Templates from another tool: save them as-is into `templates/` with `source: <tool name>`, after checking they don't pitch strangers.

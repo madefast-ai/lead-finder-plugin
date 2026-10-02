@@ -1,6 +1,6 @@
 ---
 name: setup
-description: Set up Lead Finder in this folder - create the folder structure, starter templates, the offer, a first campaign and its workbook. Use when the user types /leads:setup or wants to start using Lead Finder here.
+description: Set up Lead Finder in this folder - the folder structure, starter templates, the user's own profiles, the offer, a first campaign and its workbook. Use when the user types /leads:setup or wants to start using Lead Finder here.
 user-invocable: true
 ---
 

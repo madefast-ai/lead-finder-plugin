@@ -3,18 +3,22 @@
 
 The platform sheets (LinkedIn, Companies, Reddit, Instagram) are the single source of truth. Every row has a
 stable `key` (e.g. linkedin:pub:jane-doe). Lead Finder fills the source columns; the user (and Claude) own the
-working columns: status, score, follow-ups, notes, drafts. Merging never overwrites a working column.
+working columns: status, score, the interaction log, notes, drafts. Merging never overwrites a working column.
 
-Summary, Follow-ups and Pipeline are rebuilt on every write. Don't edit them by hand.
+Lead Finder never reaches out cold. A lead goes new → to_engage → engaging (the user comments, reacts, connects)
+→ warm (they engaged back) → talking (a conversation) → offer_sent → meeting → won or lost.
+
+Summary, Next touches and Pipeline are rebuilt on every write. Don't edit them by hand.
 
 Usage (python3; needs openpyxl: `pip install openpyxl`):
   workbook.py create   WORKBOOK
   workbook.py merge    WORKBOOK ROWS.json [--campaign NAME]   rows from get_results (JSON with "sheets") or a list
   workbook.py update   WORKBOOK KEY field=value [field=value ...]
+  workbook.py interact WORKBOOK KEY --by you|them --channel linkedin|reddit|instagram|email --kind comment|like|connect|reply|message|… [--note TEXT] [--url POST_URL]
   workbook.py remove   WORKBOOK KEY_OR_URL                    delete a person everywhere in this workbook
   workbook.py import   WORKBOOK FILE.csv|FILE.xlsx [--sheet LinkedIn|Companies|Reddit|Instagram]
   workbook.py export   WORKBOOK OUT.csv [--sheet NAME] [--status STATUS[,STATUS]]
-  workbook.py due      WORKBOOK [--days N]                   follow-ups due within N days (default 0: today and overdue)
+  workbook.py due      WORKBOOK [--days N]                   next touches due within N days (default 0: today and overdue)
   workbook.py summary  WORKBOOK
   workbook.py rebuild  WORKBOOK
 Every command prints a JSON result.
@@ -40,18 +44,24 @@ except ImportError:  # pragma: no cover
     sys.exit(2)
 
 TODAY = dt.date.today()
-FOLLOW_UP_DAYS = 4
+ENGAGE_DAYS = 3  # after you engage, look again in 3 days
+REPLY_DAYS = 1  # when they engage back, answer by tomorrow
+OFFER_DAYS = 4  # after an offer, follow up in 4 days
 
-STATUSES = ["new", "to_contact", "contacted", "replied", "meeting", "won", "lost", "not_interested", "do_not_contact"]
-OPEN_STATUSES = {"contacted", "replied", "meeting"}
+STATUSES = ["new", "to_engage", "engaging", "warm", "talking", "offer_sent", "meeting", "won", "lost", "not_interested", "do_not_contact"]
+OPEN_STATUSES = {"engaging", "warm", "talking", "offer_sent", "meeting"}
 CLOSED_STATUSES = {"won", "lost", "not_interested", "do_not_contact"}
+NOT_ENGAGED = {"new", "to_engage", "engaging"}
+# Statuses from older workbooks and CRM files.
+LEGACY = {"to_contact": "to_engage", "contacted": "engaging", "replied": "talking"}
+CONVERSATION_KINDS = {"message", "dm", "email", "call", "asked"}
 
 # Columns the user and Claude own. Merges never overwrite them.
 WORK = [
-    "status", "score", "score_reason", "next_follow_up", "contacted_on", "channel", "follow_ups", "last_reply_on", "notes",
-    "draft_first_message", "draft_follow_up", "data_source_note_sent", "campaign",
-    "offer_angle", "offer_first", "offer_channel", "offer_card",
+    "status", "score", "score_reason", "next_touch", "engage_channel", "touches", "engaged_on", "last_their_action", "last_their_action_on",
+    "interactions", "notes", "draft_comment", "draft_message", "offer_sent_on", "offer_price", "offer_file", "campaign",
 ]
+DATE_COLUMNS = {"next_touch", "engaged_on", "last_their_action_on", "offer_sent_on", "found_on"}
 
 # Source and research columns Lead Finder fills (same order as the server's SHEET_COLUMNS).
 SOURCE = {
@@ -84,10 +94,11 @@ FRONT = {
     "Reddit": ["key", "username", "subreddit", "title"],
     "Instagram": ["key", "username", "full_name", "followers"],
 }
-FRONT_WORK = ["status", "score", "score_reason", "next_follow_up", "contacted_on", "channel", "follow_ups", "notes"]
+FRONT_WORK = ["status", "score", "score_reason", "next_touch", "engage_channel", "touches", "last_their_action", "notes"]
 BACK_WORK = [c for c in WORK if c not in FRONT_WORK]
 URL_COLUMNS = {"profile_url", "company_url", "signal_url", "linkedin_url", "website", "post_url", "company_website"}
-GENERATED = ["Summary", "Follow-ups", "Pipeline"]
+GENERATED = ["Summary", "Next touches", "Pipeline"]
+OLD_GENERATED = ["Follow-ups"]
 
 # Headers people use in their own files → our columns (lower-case, spaces and punctuation removed).
 ALIASES = {
@@ -96,7 +107,7 @@ ALIASES = {
     "linkedinprofile": "profile_url", "profile": "profile_url", "url": "profile_url", "emailaddress": "email", "workemail": "email",
     "city": "location", "country": "location", "stage": "status", "leadstatus": "status", "comment": "notes", "comments_": "notes",
     "user": "username", "handle": "username", "instagram": "profile_url", "reddit": "profile_url", "companylinkedin": "company_url",
-    "companyurl": "company_url", "domain": "website", "companywebsite": "website", "followup": "next_follow_up", "nextfollowup": "next_follow_up",
+    "companyurl": "company_url", "domain": "website", "companywebsite": "website", "followup": "next_touch", "nextfollowup": "next_touch", "nexttouch": "next_touch",
 }
 
 HEADER_FILL = PatternFill("solid", fgColor="1D6B4F")
@@ -201,8 +212,8 @@ def style(ws, cols: list[str], with_status: bool = False) -> None:
         cell.alignment = Alignment(vertical="center")
         letter = get_column_letter(i)
         long = c in {"about", "experience", "signal_text", "text", "caption", "recent_posts", "recent_comments", "recent_reactions", "notes",
-                     "draft_first_message", "draft_follow_up", "description", "company_description", "bio", "recent_activity", "score_reason"}
-        ws.column_dimensions[letter].width = 48 if long else 22 if c in URL_COLUMNS else 14 if c in {"status", "score", "channel"} else 18
+                     "interactions", "draft_comment", "draft_message", "description", "company_description", "bio", "recent_activity", "score_reason"}
+        ws.column_dimensions[letter].width = 48 if long else 22 if c in URL_COLUMNS else 14 if c in {"status", "score", "engage_channel", "touches"} else 18
         if c == "key":
             ws.column_dimensions[letter].hidden = True
         if c in WORK:
@@ -214,7 +225,7 @@ def style(ws, cols: list[str], with_status: bool = False) -> None:
                 if isinstance(cell.value, str) and cell.value.startswith("http"):
                     cell.hyperlink = cell.value
                     cell.font = Font(color="1D6B4F", underline="single")
-        if c in {"next_follow_up", "contacted_on", "last_reply_on", "found_on"}:
+        if c in DATE_COLUMNS:
             for row in range(2, ws.max_row + 1):
                 ws.cell(row=row, column=i).number_format = "yyyy-mm-dd"
     ws.freeze_panes = "C2" if ws.max_column > 2 else "A2"
@@ -254,7 +265,7 @@ def label(sheet: str, r: dict) -> str:
 
 def rebuild(wb) -> None:
     data = all_rows(wb)
-    for g in GENERATED:
+    for g in GENERATED + OLD_GENERATED:
         if g in wb.sheetnames:
             wb.remove(wb[g])
 
@@ -262,32 +273,32 @@ def rebuild(wb) -> None:
     ws = wb.create_sheet("Summary", 0)
     ws.append(["Lead Finder workbook"])
     ws["A1"].font = Font(bold=True, size=14)
-    ws.append([f"Updated {dt.datetime.now().strftime('%Y-%m-%d %H:%M')}. Platform sheets are the source of truth; Summary, Follow-ups and Pipeline are rebuilt automatically."])
-    ws.append(["Data came from public profiles and posts, found through your own Apify account. Tell people where you got their details in your first message, and delete anyone who asks."])
+    ws.append([f"Updated {dt.datetime.now().strftime('%Y-%m-%d %H:%M')}. Platform sheets are the source of truth; Summary, Next touches and Pipeline are rebuilt automatically."])
+    ws.append(["Never message someone who hasn't interacted with you: engage in public first (comments, reactions). Delete anyone who asks."])
     ws.append([])
     ws.append(["Sheet"] + STATUSES + ["total"])
     for s in SHEETS:
         counts = [sum(1 for r in data.get(s, []) if (r.get("status") or "new") == st) for st in STATUSES]
         ws.append([s] + counts + [len(data.get(s, []))])
-    due = follow_ups(data, 0)
+    due = touches_due(data, 0)
     ws.append([])
-    ws.append(["Follow-ups due today or overdue", len(due)])
+    ws.append(["Next touches due today or overdue", len(due)])
     for row in (5,):
         for c in ws[row]:
             c.font = Font(bold=True)
     ws.column_dimensions["A"].width = 34
 
-    # Follow-ups: due and planned, across platforms
-    fu = wb.create_sheet("Follow-ups", 1)
-    cols = ["due", "overdue_days", "sheet", "who", "status", "channel", "contacted_on", "follow_ups", "profile_url", "notes", "key"]
+    # Next touches: due and planned, across platforms
+    fu = wb.create_sheet("Next touches", 1)
+    cols = ["due", "overdue_days", "sheet", "who", "status", "engage_channel", "last_their_action", "touches", "profile_url", "notes", "key"]
     fu.append(cols)
-    for f in follow_ups(data, 3650):
+    for f in touches_due(data, 3650):
         fu.append([f.get(c) for c in cols])
     style(fu, cols)
 
     # Pipeline: everyone past "new", by status
     pl = wb.create_sheet("Pipeline", 2)
-    cols = ["status", "sheet", "who", "score", "next_follow_up", "contacted_on", "channel", "profile_url", "key"]
+    cols = ["status", "sheet", "who", "score", "next_touch", "engaged_on", "engage_channel", "last_their_action", "profile_url", "key"]
     pl.append(cols)
     order = {s: i for i, s in enumerate(STATUSES)}
     rows = []
@@ -296,25 +307,25 @@ def rebuild(wb) -> None:
             st = r.get("status") or "new"
             if st in ("new",):
                 continue
-            rows.append([st, s, label(s, r), r.get("score"), to_date(r.get("next_follow_up")), to_date(r.get("contacted_on")), r.get("channel"),
-                         r.get("profile_url") or r.get("linkedin_url"), r.get("key")])
+            rows.append([st, s, label(s, r), r.get("score"), to_date(r.get("next_touch")), to_date(r.get("engaged_on")), r.get("engage_channel"),
+                         r.get("last_their_action"), r.get("profile_url") or r.get("linkedin_url"), r.get("key")])
     for row in sorted(rows, key=lambda x: (order.get(x[0], 99), x[4] or dt.date.max)):
         pl.append(row)
     style(pl, cols)
 
 
-def follow_ups(data: dict[str, list[dict]], days: int) -> list[dict]:
+def touches_due(data: dict[str, list[dict]], days: int) -> list[dict]:
     limit = TODAY + dt.timedelta(days=days)
     out_rows = []
     for s, rs in data.items():
         for r in rs:
             st = r.get("status") or "new"
-            d = to_date(r.get("next_follow_up"))
+            d = to_date(r.get("next_touch"))
             if st in CLOSED_STATUSES or not d or d > limit:
                 continue
             out_rows.append({
-                "due": d, "overdue_days": max(0, (TODAY - d).days), "sheet": s, "who": label(s, r), "status": st, "channel": r.get("channel"),
-                "contacted_on": to_date(r.get("contacted_on")), "follow_ups": r.get("follow_ups"), "profile_url": r.get("profile_url") or r.get("linkedin_url"),
+                "due": d, "overdue_days": max(0, (TODAY - d).days), "sheet": s, "who": label(s, r), "status": st, "engage_channel": r.get("engage_channel"),
+                "last_their_action": r.get("last_their_action"), "touches": r.get("touches"), "profile_url": r.get("profile_url") or r.get("linkedin_url"),
                 "notes": r.get("notes"), "key": r.get("key"),
             })
     return sorted(out_rows, key=lambda x: x["due"])
@@ -420,6 +431,23 @@ def derive_key(sheet: str, r: dict) -> str | None:
     return None
 
 
+def find_row(data: dict[str, list[dict]], key: str):
+    for s_, rows in data.items():
+        for r in rows:
+            if str(r.get("key")) == key or (r.get("profile_url") and str(r.get("profile_url")).rstrip("/") == key.rstrip("/")):
+                return s_, rows, r
+    return None, None, None
+
+
+def apply_sets(r: dict, sets: dict) -> None:
+    for k, v in sets.items():
+        r[k] = to_date(v) if k in DATE_COLUMNS and v else (None if v == "" else v)
+
+
+def in_days(n: int) -> str:
+    return (TODAY + dt.timedelta(days=n)).isoformat()
+
+
 def cmd_update(wb, key: str, pairs: list[str]) -> dict:
     data = all_rows(wb)
     sets = {}
@@ -428,28 +456,62 @@ def cmd_update(wb, key: str, pairs: list[str]) -> dict:
             raise SystemExit(f"Expected field=value, got {p}")
         k, v = p.split("=", 1)
         sets[k.strip()] = v
-    for s, rows in data.items():
-        for r in rows:
-            if str(r.get("key")) == key or (r.get("profile_url") and str(r.get("profile_url")).rstrip("/") == key.rstrip("/")):
-                st = sets.get("status")
-                if st and st not in STATUSES:
-                    raise SystemExit(f"Unknown status {st}. Use one of: {', '.join(STATUSES)}")
-                if st == "contacted":
-                    first = (r.get("status") or "new") not in OPEN_STATUSES
-                    sets.setdefault("contacted_on", TODAY.isoformat()) if first else None
-                    if not first:
-                        sets.setdefault("follow_ups", str(int(r.get("follow_ups") or 0) + 1))
-                    sets.setdefault("next_follow_up", (TODAY + dt.timedelta(days=FOLLOW_UP_DAYS)).isoformat())
-                if st == "replied":
-                    sets.setdefault("last_reply_on", TODAY.isoformat())
-                    sets.setdefault("next_follow_up", "")
-                if st in CLOSED_STATUSES:
-                    sets.setdefault("next_follow_up", "")
-                for k, v in sets.items():
-                    r[k] = to_date(v) if k in {"next_follow_up", "contacted_on", "last_reply_on"} and v else (None if v == "" else v)
-                write_sheet(wb, s, rows)
-                return {"updated": key, "sheet": s, "row": {k: r.get(k) for k in ["status", "contacted_on", "next_follow_up", "follow_ups", "notes"] if r.get(k) not in (None, "")}}
-    return {"error": f"No row with key or profile_url {key}"}
+    s_, rows, r = find_row(data, key)
+    if r is None:
+        return {"error": f"No row with key or profile_url {key}"}
+    st = sets.get("status")
+    if st:
+        st = sets["status"] = LEGACY.get(st, st)
+        if st not in STATUSES:
+            raise SystemExit(f"Unknown status {st}. Use one of: {', '.join(STATUSES)}")
+        if st == "engaging" and not r.get("engaged_on"):
+            sets.setdefault("engaged_on", TODAY.isoformat())
+            sets.setdefault("next_touch", in_days(ENGAGE_DAYS))
+        if st in ("warm", "talking"):
+            sets.setdefault("next_touch", in_days(REPLY_DAYS))
+        if st == "offer_sent":
+            sets.setdefault("offer_sent_on", TODAY.isoformat())
+            sets.setdefault("next_touch", in_days(OFFER_DAYS))
+        if st in CLOSED_STATUSES:
+            sets.setdefault("next_touch", "")
+    apply_sets(r, sets)
+    write_sheet(wb, s_, rows)
+    return {"updated": key, "sheet": s_, "row": {k: r.get(k) for k in ["status", "next_touch", "engaged_on", "offer_sent_on", "notes"] if r.get(k) not in (None, "")}}
+
+
+def cmd_interact(wb, key: str, by: str, channel: str, kind: str, note: str | None, url: str | None) -> dict:
+    """Logs one interaction and moves the lead along: your touches make them engaging; theirs make them warm or talking."""
+    if by not in ("you", "them"):
+        raise SystemExit("--by must be you or them")
+    data = all_rows(wb)
+    s_, rows, r = find_row(data, key)
+    if r is None:
+        return {"error": f"No row with key or profile_url {key}"}
+    st = LEGACY.get(r.get("status") or "new", r.get("status") or "new")
+    line = f"{TODAY.isoformat()} {by}: {channel} {kind}" + (f" {url}" if url else "") + (f" · {note}" if note else "")
+    log = [x for x in str(r.get("interactions") or "").split("\n") if x.strip()]
+    sets: dict = {"interactions": "\n".join((log + [line])[-30:])}
+    if by == "you":
+        sets["touches"] = str(int(r.get("touches") or 0) + 1)
+        sets["engage_channel"] = channel
+        if not r.get("engaged_on"):
+            sets["engaged_on"] = TODAY.isoformat()
+        if st in ("new", "to_engage"):
+            sets["status"] = "engaging"
+        if st in NOT_ENGAGED:
+            sets["next_touch"] = in_days(ENGAGE_DAYS)
+    else:
+        sets["last_their_action"] = f"{kind} ({channel})"
+        sets["last_their_action_on"] = TODAY.isoformat()
+        if kind in CONVERSATION_KINDS and st in NOT_ENGAGED | {"warm"}:
+            sets["status"] = "talking"
+        elif st in NOT_ENGAGED:
+            sets["status"] = "warm"
+        if st not in CLOSED_STATUSES:
+            sets["next_touch"] = in_days(REPLY_DAYS)
+    apply_sets(r, sets)
+    write_sheet(wb, s_, rows)
+    return {"logged": line, "sheet": s_, "row": {k: r.get(k) for k in ["status", "touches", "last_their_action", "next_touch"] if r.get(k) not in (None, "")}}
 
 
 def cmd_remove(wb, needle: str) -> dict:
@@ -512,6 +574,7 @@ def map_row(r: dict) -> dict:
     out_row.pop("_last", None)
     if isinstance(out_row.get("status"), str):
         s = out_row["status"].strip().lower().replace(" ", "_")
+        s = LEGACY.get(s, s)
         out_row["status"] = s if s in STATUSES else "new"
     out_row.update({f"import_{k}": v for k, v in extra.items()})
     return out_row
@@ -578,8 +641,8 @@ def cmd_summary(wb) -> dict:
     data = all_rows(wb)
     return {
         "sheets": {s: {st: n for st in STATUSES if (n := sum(1 for r in rs if (r.get("status") or "new") == st))} | {"total": len(rs)} for s, rs in data.items()},
-        "follow_ups_due": len(follow_ups(data, 0)),
-        "follow_ups_next_7_days": len(follow_ups(data, 7)),
+        "touches_due": len(touches_due(data, 0)),
+        "touches_next_7_days": len(touches_due(data, 7)),
     }
 
 
@@ -606,6 +669,8 @@ def main(argv: list[str]) -> None:
         res = merge_rows(wb, incoming_rows(payload), opts.get("--campaign"))
     elif cmd == "update":
         res = cmd_update(wb, positional[0], positional[1:])
+    elif cmd == "interact":
+        res = cmd_interact(wb, positional[0], opts.get("--by", ""), opts.get("--channel", "linkedin"), opts.get("--kind", "comment"), opts.get("--note"), opts.get("--url"))
     elif cmd == "remove":
         res = cmd_remove(wb, positional[0])
     elif cmd == "import":
@@ -614,7 +679,7 @@ def main(argv: list[str]) -> None:
         out(cmd_export(wb, positional[0], opts.get("--sheet"), opts.get("--status")))
         return
     elif cmd == "due":
-        out({"due": follow_ups(all_rows(wb), int(opts.get("--days", "0")))})
+        out({"due": touches_due(all_rows(wb), int(opts.get("--days", "0")))})
         return
     elif cmd == "summary":
         out(cmd_summary(wb))
