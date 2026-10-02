@@ -10,7 +10,7 @@
     {
       "name": "leads",
       "source": "./leads",
-      "description": "Lead Finder: find B2B leads on LinkedIn, Reddit and Instagram, engage with them in public, see who engages back, and create the offer when they're interested. Your leads stay in a workbook on your computer.",
+      "description": "Lead Finder: find B2B leads on LinkedIn, Reddit and Instagram, engage with them in public, see who engages back, and prepare the offer for a call when they're interested. Your leads stay in a workbook on your computer.",
       "version": "2.2.0"
     }
   ]

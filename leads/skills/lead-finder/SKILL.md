@@ -24,7 +24,7 @@ offer.md                a mirror of the saved offer (the server keeps the origin
 campaigns/<slug>.md     one ideal-customer segment, where they talk, the searches that work
 topics.md               saved phrases to check on demand, per platform
 templates/*.md          comment, reply and offer templates
-offers/<lead-key>.md    the offer for one lead, as sent
+offers/<lead-key>.md    the offer for one lead and the call plan
 leads/<slug>.xlsx       the workbook of that campaign
 imports/  exports/      files in and out
 ```
@@ -37,7 +37,7 @@ One `.xlsx` per campaign with sheets **LinkedIn**, **Companies**, **Reddit**, **
 python3 "${CLAUDE_PLUGIN_ROOT}/skills/lead-finder/scripts/workbook.py" <command> leads/<slug>.xlsx ...
 ```
 
-If `${CLAUDE_PLUGIN_ROOT}` isn't set, find `workbook.py` in this skill's `scripts/` folder. If openpyxl is missing, `pip install openpyxl`. Statuses: new → to_engage → engaging → warm → talking → offer_sent → meeting → won / lost (plus not_interested, do_not_contact). Commands and columns: `references/workbook.md`. Close the file in Excel first if the script says it can't write.
+If `${CLAUDE_PLUGIN_ROOT}` isn't set, find `workbook.py` in this skill's `scripts/` folder. If openpyxl is missing, `pip install openpyxl`. Statuses: new → to_engage → engaging → warm → talking → meeting → offered → won / lost (plus not_interested, do_not_contact). Commands and columns: `references/workbook.md`. Close the file in Excel first if the script says it can't write.
 
 ## Workflows
 
@@ -49,8 +49,8 @@ Details for each are in `references/workflows.md`. Load it when you run one.
 - **Engage** (`/leads:engage`): today's leads to engage, a genuine comment suggested per lead (`check_message` stage engage), logged with `interact --by you` once the user posted it.
 - **Check who engaged back** (`/leads:check`): `check_lead_activity`, log what they did (`interact --by them`: they become warm), suggest the next comment, ask about messages the check can't see.
 - **Answer a lead who wrote**: log it (`--kind message`: talking), help the user reply (template `reply-to-message`), note their goal.
-- **Offer for one lead** (`/leads:offer`): the `offer` skill, for warm or talking leads only: their offer in `offers/`, edited with the user, then the message, `record_offer`, `status=offer_sent`.
-- **Today** (`/leads:today`): what's due: answers, offer follow-ups, engagement, calls.
+- **Offer for one lead** (`/leads:offer`): the `offer` skill, for interested leads only: suggest a call (`status=meeting`), prepare their offer and the call plan in `offers/`, edited with the user. The offer is presented on the call, never in a message. After it: `record_offer`, `status=offered`, the recap and at most two follow-ups.
+- **Today** (`/leads:today`): what's due: answers, calls to prepare, follow-ups after a call, engagement.
 - **Topics**: check the phrases in `topics.md` only when the user asks; results go through the same pick step.
 - **Import** a spreadsheet the user drops in `imports/`, **export** for a CRM into `exports/`.
 - **Forget someone**: `forget_person` on the server and `workbook.py remove` in every workbook in `leads/`.
@@ -60,7 +60,7 @@ Details for each are in `references/workflows.md`. Load it when you run one.
 - Only picked leads go into the workbook. Save them in the same session: the server deletes results 12 hours after each search.
 - Scores are suggestions on fit only: role, company, need, signals. Never score on age, gender, nationality, ethnicity, religion, health, family status or photos.
 - No private message, DM or email to a lead who hasn't engaged with the user or written to them. If the user asks for one, explain the method and suggest a comment instead.
-- Comments never pitch. The offer comes only when the lead is interested.
+- Comments never pitch. The offer is presented on a 1:1 call, once the lead is interested; never in a message.
 - Every draft goes through `check_message` and follows the writing rules in `references/engagement.md`. Never invent results, numbers or deadlines.
 - Report the Apify cost a tool returns in one short line.
 - The workbook holds personal data: it stays in the user's folder; don't paste it elsewhere.

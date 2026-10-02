@@ -9,14 +9,14 @@ campaigns/
   <campaign-slug>.md
 topics.md
 offers/
-  <lead-key>.md        the offer for one lead, as sent
+  <lead-key>.md        the offer for one lead and the call plan
 templates/
   linkedin-comment.md
   reddit-comment.md
   instagram-comment.md
   connection-request.md
   reply-to-message.md
-  offer-message.md
+  suggest-a-call.md
   offer-follow-up.md
   call-recap.md
 leads/
@@ -36,7 +36,7 @@ Write this once (adapt the names):
 
 This folder is your lead database. Claude reads and updates it with the Lead Finder plugin.
 
-- offer.md: what you sell. campaigns/: who you target. topics.md: phrases to check on demand. offers/: the offer you sent each lead.
+- offer.md: what you sell. campaigns/: who you target. topics.md: phrases to check on demand. offers/: the offer for each lead you have a call with.
 - leads/*.xlsx: one workbook per campaign. Edit status, notes and drafts freely; Summary, Next touches and Pipeline are rebuilt automatically.
 - Engage in public first (comments, reactions). Write privately only to people who've interacted with you.
 - The Lead Finder server keeps search results for 12 hours only. What you keep lives here, and is your responsibility: keep it secure, delete people who ask, don't share it.
@@ -48,12 +48,12 @@ A mirror of the offer saved on the Lead Finder server (`get_offer` returns it as
 
 ## offers/<lead-key>.md
 
-The offer for one lead (the key with `:` replaced by `-`, e.g. `linkedin-pub-olivia-hart.md`), written by the `offer` skill:
+The offer for one lead and the call plan (the key with `:` replaced by `-`, e.g. `linkedin-pub-olivia-hart.md`), written by the `offer` skill before the call and completed after it:
 
 ```markdown
 # Offer for Olivia Hart · Linden Knitwear
 
-Status: sent 2 Oct on LinkedIn · 4,200 EUR
+Call: 3 Oct, 30 minutes · offered 4,200 EUR
 
 ## Her goal
 "A site that keeps up with drop days" (her message, 30 Sep)
@@ -69,11 +69,13 @@ Status: sent 2 Oct on LinkedIn · 4,200 EUR
 ## Why it'll work for her
 Harbour & Co grew conversion 38% after the rebuild. If the store isn't live in 8 weeks, we work for free until it is.
 
-## For the call
-Anchor: Rebuild + 12 months of growth, 14,000 EUR. Option A: 3 payments of 1,400 EUR. Option B: without the redesign and monitoring, 2,600 EUR.
+## The call plan
+Her goal first. Anchor: Rebuild + 12 months of growth, 14,000 EUR. Then her offer, then stop.
+Expect: "Can we do it after the drop?" Answer: the 6-week timeline and launch-day monitoring.
+After a no: "Is it the total, or paying it all at once?" Option A: 3 payments of 1,400 EUR. Option B: without the monitoring, 2,600 EUR.
 
-## Messages
-(The offer message and any follow-ups, newest last.)
+## After the call
+(What was offered, what she said, the next step. Then the recap and any follow-ups, newest last.)
 ```
 
 ## campaigns/<slug>.md

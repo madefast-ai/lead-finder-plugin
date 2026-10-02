@@ -2,7 +2,7 @@
   "name": "leads",
   "displayName": "Lead Finder",
   "version": "2.2.0",
-  "description": "Find B2B leads on LinkedIn, Reddit and Instagram through your own Apify account, engage with them in public, track who engages back, and create the offer when they're interested. Never reaches out cold, never sends anything for you.",
+  "description": "Find B2B leads on LinkedIn, Reddit and Instagram through your own Apify account, engage with them in public, track who engages back, and prepare the offer for a call when they're interested. Never reaches out cold, never sends anything for you.",
   "author": {
     "name": "Madefast",
     "url": "https://leadfinder.madefast.dev"

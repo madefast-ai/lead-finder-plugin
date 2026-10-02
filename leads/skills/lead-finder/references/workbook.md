@@ -8,13 +8,13 @@ python3 "$S" create   leads/uk-dtc.xlsx
 python3 "$S" merge    leads/uk-dtc.xlsx /tmp/rows.json --campaign uk-dtc
 python3 "$S" interact leads/uk-dtc.xlsx linkedin:pub:jane-doe --by you --channel linkedin --kind comment --url https://www.linkedin.com/posts/…
 python3 "$S" interact leads/uk-dtc.xlsx linkedin:pub:jane-doe --by them --channel linkedin --kind reply --note "Asked how we handle drop days"
-python3 "$S" update   leads/uk-dtc.xlsx linkedin:pub:jane-doe status=offer_sent offer_price=4200 offer_file=offers/linkedin-pub-jane-doe.md
+python3 "$S" update   leads/uk-dtc.xlsx linkedin:pub:jane-doe status=offered offer_price=4200 offer_file=offers/linkedin-pub-jane-doe.md
 python3 "$S" update   leads/uk-dtc.xlsx https://www.linkedin.com/in/jane-doe "notes=Call after the 15th" next_touch=2026-10-15
 python3 "$S" due      leads/uk-dtc.xlsx --days 1
 python3 "$S" summary  leads/uk-dtc.xlsx
 python3 "$S" remove   leads/uk-dtc.xlsx https://www.linkedin.com/in/jane-doe
 python3 "$S" import   leads/uk-dtc.xlsx imports/crm-export.csv [--sheet LinkedIn]
-python3 "$S" export   leads/uk-dtc.xlsx exports/uk-dtc-talking.csv --status talking,offer_sent
+python3 "$S" export   leads/uk-dtc.xlsx exports/uk-dtc-talking.csv --status talking,meeting,offered
 ```
 
 Every command prints JSON. Write rows for `merge` to a temporary JSON file first (outside the folder).
@@ -34,7 +34,7 @@ Working columns (the user's; merges never overwrite them):
 
 | Column | Meaning |
 |---|---|
-| status | new, to_engage, engaging, warm, talking, offer_sent, meeting, won, lost, not_interested, do_not_contact |
+| status | new, to_engage, engaging, warm, talking, meeting, offered, won, lost, not_interested, do_not_contact |
 | score, score_reason | fit 1-10 and why |
 | next_touch | the date of the next thing to do with them (engage again, answer, follow up) |
 | engage_channel | where the user engages them: linkedin, reddit, instagram, email |
@@ -44,7 +44,7 @@ Working columns (the user's; merges never overwrite them):
 | interactions | the log, one line per touch: `2026-10-02 you: linkedin comment <post link> · note` / `2026-10-03 them: linkedin reply` |
 | notes | anything the user wants to remember |
 | draft_comment, draft_message | the current drafts |
-| offer_sent_on, offer_price, offer_file | when the offer went out, the price quoted, and its file in `offers/` |
+| offered_on, offer_price, offer_file | when the offer was made on a call, the price offered, and its file in `offers/` |
 | campaign | the campaign slug |
 
 Source columns (filled by Lead Finder): LinkedIn: name, headline, role, company, company_url, location, profile_url, open_to_work, email, email_quality, signal, signal_text, signal_url, signal_date, source, search, found_on; research: about, experience, education, skills, followers, other_emails, recent_posts, recent_comments, recent_reactions. Companies: company, linkedin_url, industry, size, location, website, description, signal…; research: company_description, company_website, company_size, company_industry, company_hq, company_founded, company_specialities, company_funding, company_recent_posts. Reddit: username, profile_url, subreddit, type (post/comment), title, text, post_url, posted_at, upvotes, comments, signal…; research: recent_activity, karma, about. Instagram: username, full_name, profile_url, caption, hashtags, post_url, posted_at, likes, comments, signal…; research: bio, followers, website, business_category, business_account, posts_count, recent_posts.
@@ -55,7 +55,8 @@ Imported files keep unknown columns as `import_<name>`.
 
 - `interact --by you`: logs the touch, counts it, sets `engage_channel` and `engaged_on` (first time), moves `new`/`to_engage` to `engaging`, next touch in 3 days.
 - `interact --by them`: logs it, sets `last_their_action`; `engaging` becomes `warm`, or `talking` when they messaged, emailed or asked (`--kind message|dm|email|asked|call`); next touch tomorrow.
-- `status=offer_sent`: sets `offer_sent_on`, next touch in 4 days.
+- `status=meeting`: pass the call date as `next_touch=YYYY-MM-DD`.
+- `status=offered`: sets `offered_on`, next touch in 4 days. `offer_sent` from older files becomes `offered`.
 - won, lost, not_interested, do_not_contact: clear `next_touch`.
 - Dates are `YYYY-MM-DD`. Old statuses (to_contact, contacted, replied) are read as to_engage, engaging and talking.
 

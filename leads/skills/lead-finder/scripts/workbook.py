@@ -6,7 +6,8 @@ stable `key` (e.g. linkedin:pub:jane-doe). Lead Finder fills the source columns;
 working columns: status, score, the interaction log, notes, drafts. Merging never overwrites a working column.
 
 Lead Finder never reaches out cold. A lead goes new → to_engage → engaging (the user comments, reacts, connects)
-→ warm (they engaged back) → talking (a conversation) → offer_sent → meeting → won or lost.
+→ warm (they engaged back) → talking (a conversation) → meeting (a call booked) → offered (the offer, made on the
+call) → won or lost.
 
 Summary, Next touches and Pipeline are rebuilt on every write. Don't edit them by hand.
 
@@ -46,22 +47,22 @@ except ImportError:  # pragma: no cover
 TODAY = dt.date.today()
 ENGAGE_DAYS = 3  # after you engage, look again in 3 days
 REPLY_DAYS = 1  # when they engage back, answer by tomorrow
-OFFER_DAYS = 4  # after an offer, follow up in 4 days
+OFFER_DAYS = 4  # after the offer on a call, follow up in 4 days
 
-STATUSES = ["new", "to_engage", "engaging", "warm", "talking", "offer_sent", "meeting", "won", "lost", "not_interested", "do_not_contact"]
-OPEN_STATUSES = {"engaging", "warm", "talking", "offer_sent", "meeting"}
+STATUSES = ["new", "to_engage", "engaging", "warm", "talking", "meeting", "offered", "won", "lost", "not_interested", "do_not_contact"]
+OPEN_STATUSES = {"engaging", "warm", "talking", "meeting", "offered"}
 CLOSED_STATUSES = {"won", "lost", "not_interested", "do_not_contact"}
 NOT_ENGAGED = {"new", "to_engage", "engaging"}
 # Statuses from older workbooks and CRM files.
-LEGACY = {"to_contact": "to_engage", "contacted": "engaging", "replied": "talking"}
+LEGACY = {"to_contact": "to_engage", "contacted": "engaging", "replied": "talking", "offer_sent": "offered"}
 CONVERSATION_KINDS = {"message", "dm", "email", "call", "asked"}
 
 # Columns the user and Claude own. Merges never overwrite them.
 WORK = [
     "status", "score", "score_reason", "next_touch", "engage_channel", "touches", "engaged_on", "last_their_action", "last_their_action_on",
-    "interactions", "notes", "draft_comment", "draft_message", "offer_sent_on", "offer_price", "offer_file", "campaign",
+    "interactions", "notes", "draft_comment", "draft_message", "offered_on", "offer_price", "offer_file", "campaign",
 ]
-DATE_COLUMNS = {"next_touch", "engaged_on", "last_their_action_on", "offer_sent_on", "found_on"}
+DATE_COLUMNS = {"next_touch", "engaged_on", "last_their_action_on", "offered_on", "found_on"}
 
 # Source and research columns Lead Finder fills (same order as the server's SHEET_COLUMNS).
 SOURCE = {
@@ -469,14 +470,14 @@ def cmd_update(wb, key: str, pairs: list[str]) -> dict:
             sets.setdefault("next_touch", in_days(ENGAGE_DAYS))
         if st in ("warm", "talking"):
             sets.setdefault("next_touch", in_days(REPLY_DAYS))
-        if st == "offer_sent":
-            sets.setdefault("offer_sent_on", TODAY.isoformat())
+        if st == "offered":
+            sets.setdefault("offered_on", TODAY.isoformat())
             sets.setdefault("next_touch", in_days(OFFER_DAYS))
         if st in CLOSED_STATUSES:
             sets.setdefault("next_touch", "")
     apply_sets(r, sets)
     write_sheet(wb, s_, rows)
-    return {"updated": key, "sheet": s_, "row": {k: r.get(k) for k in ["status", "next_touch", "engaged_on", "offer_sent_on", "notes"] if r.get(k) not in (None, "")}}
+    return {"updated": key, "sheet": s_, "row": {k: r.get(k) for k in ["status", "next_touch", "engaged_on", "offered_on", "notes"] if r.get(k) not in (None, "")}}
 
 
 def cmd_interact(wb, key: str, by: str, channel: str, kind: str, note: str | None, url: str | None) -> dict:

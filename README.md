@@ -2,7 +2,7 @@
 
 **Find the people who need what you sell, right inside Claude.**
 
-Tell Claude what you sell. Lead Finder finds people who need it on LinkedIn, Reddit and Instagram and scores each one against your ideal customer. You engage with them in public, by hand: Claude suggests genuine comments on their posts and tracks who engaged back. When someone is interested, Claude creates their offer, with the exact scope and price, from the offer you built once. Your leads stay in a workbook in a folder on your own computer.
+Tell Claude what you sell. Lead Finder finds people who need it on LinkedIn, Reddit and Instagram and scores each one against your ideal customer. You engage with them in public, by hand: Claude suggests genuine comments on their posts and tracks who engaged back. When someone is interested, you book a call, and Claude prepares their offer for it, with the exact scope and price, from the offer you built once. Your leads stay in a workbook in a folder on your own computer.
 
 Lead Finder never reaches anyone cold and never sends anything for you. You comment, connect and write from your own accounts; Claude drafts, checks and keeps track.
 
@@ -57,7 +57,7 @@ Then run `/mcp`, pick **Madefast Lead Finder** and sign in.
 2. **Engage.** Comment on their posts, answer their questions, react, follow. Claude suggests a comment that adds something (never a pitch), and you post it yourself.
 3. **Warm.** When they reply, comment on your posts or react, they're warm. Claude checks for you and logs it.
 4. **Talk.** When they write to you, you're in a conversation. Claude helps you answer what they said.
-5. **Offer.** When they're interested, Claude creates their offer from yours: what's included for them, the price, the timeline. You edit it and send it.
+5. **Call.** When they're interested, suggest a short call. Claude prepares their offer from yours (what's included for them, the price, the timeline) and the plan for the call. You present it on the call, and Claude writes the recap afterwards.
 
 ## First run
 
@@ -79,8 +79,8 @@ In Cowork, choose a folder for your leads (an empty one is best), then, in this 
 | `/leads:find` | Find new leads for a campaign and save the ones you keep. |
 | `/leads:engage` | Get today's leads to engage with and a comment for each; log what you did. |
 | `/leads:check` | See who engaged back: replies, comments and reactions on your posts, their new posts. |
-| `/leads:offer` | Create the offer for a lead who's interested, edit it, and write the message. |
-| `/leads:today` | What's due today: who to answer, offers to follow up, who to engage again. |
+| `/leads:offer` | For a lead who's interested: suggest a call, prepare their offer for it, then the recap and follow-ups. |
+| `/leads:today` | What's due today: who to answer, calls to prepare, follow-ups after a call, who to engage again. |
 | `/leads:import` | Bring a CSV or Excel file of leads (a CRM export, an old sheet) into a workbook. |
 
 ### Or just ask
@@ -91,7 +91,8 @@ In Cowork, choose a folder for your leads (an empty one is best), then, in this 
 - "I commented on Olivia's post about drop days"
 - "Did anyone engage back this week?"
 - "Olivia messaged me, she's asking what a rebuild would cost"
-- "Create Olivia's offer, but without the monitoring"
+- "Olivia booked a call for Thursday. Prepare her offer, without the monitoring"
+- "I offered Olivia the rebuild on the call, write the recap"
 - "Forget this person and never show them again"
 
 ## What it can do
@@ -110,12 +111,13 @@ In Cowork, choose a folder for your leads (an empty one is best), then, in this 
 
 **Offer**
 - Your offer, built once with an interview: what's included with durations, the price and terms, real proof, the guarantee, an anchor, a payment plan and a feature downsell.
-- The offer for one lead: adapted scope, price and timeline, edited with you, saved to your folder, with the message that presents it.
+- The offer for one lead, for your call with them: adapted scope, price and timeline, and the call plan (the anchor, then their offer, and what to suggest after a no), edited with you and saved to your folder. The offer and the price never go in a message before the call.
+- After the call: the recap, and at most two follow-ups if they haven't decided.
 - Remembers what you offered, so follow-ups and offers to colleagues at the same company bring something new.
 
 **Keep**
 - An Excel workbook per campaign, one sheet per platform, plus Summary, Next touches and Pipeline sheets that update themselves.
-- Eight starter templates (comments, a connection request, a reply, the offer, a follow-up after an offer, a call recap), yours to edit.
+- Eight starter templates (comments, a connection request, a reply, suggesting a call, a call recap, a follow-up after the call), yours to edit.
 
 ## Your folder
 
@@ -126,14 +128,14 @@ README.md            what this folder is
 offer.md             your offer (a copy of the one saved on your account)
 campaigns/           who you target, one file per campaign
 topics.md            phrases to check on Reddit and LinkedIn when you ask
-offers/              the offer you sent each lead
-templates/           your comment, reply and offer templates
+offers/              the offer and call plan for each lead you have a call with
+templates/           your comment, reply and recap templates
 leads/               one Excel workbook per campaign
 imports/             files to import
 exports/             CSV exports
 ```
 
-Statuses run `new` → `to_engage` → `engaging` → `warm` → `talking` → `offer_sent` → `meeting` → `won` or `lost`, plus `not_interested` and `do_not_contact`. You can edit status, notes and drafts freely; Lead Finder merges new results by person and never overwrites your columns.
+Statuses run `new` → `to_engage` → `engaging` → `warm` → `talking` → `meeting` → `offered` → `won` or `lost`, plus `not_interested` and `do_not_contact`. You can edit status, notes and drafts freely; Lead Finder merges new results by person and never overwrites your columns.
 
 ## Plans and quota
 

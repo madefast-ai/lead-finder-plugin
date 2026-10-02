@@ -6,7 +6,7 @@ user-invocable: true
 
 # Offer builder
 
-The offer is built **once** with an interview and saved on the Lead Finder server (the user's own business data), so every lead's offer starts from it and the user never has to explain their business again. In Cowork it's mirrored to `offer.md`. It's shown only to leads who are already talking with the user and interested: Lead Finder never pitches strangers, so there's nothing here for a first message.
+The offer is built **once** with an interview and saved on the Lead Finder server (the user's own business data), so every lead's offer starts from it and the user never has to explain their business again. In Cowork it's mirrored to `offer.md`. It's presented only on a 1:1 call with leads who are talking with the user and interested: Lead Finder never pitches strangers, and the offer and the price never go out in a message before the call.
 
 The method comes from Alex Hormozi's *$100M Offers* (the offer and the value equation) and *$100M Money Models* (anchor, payment plan, feature downsell).
 

@@ -47,21 +47,24 @@
 
 ## When someone engages back or writes
 
-"She replied to my comment" → `interact … --by them --kind reply`. "He messaged me asking about X" → `interact … --by them --kind message --note "asked about X"`. Then help the user answer (template `reply-to-message`, `check_message` stage `conversation`). Their goal and what's in the way go into `notes`: the offer will answer them.
+"She replied to my comment" → `interact … --by them --kind reply`. "He messaged me asking about X" → `interact … --by them --kind message --note "asked about X"`. Then help the user answer (template `reply-to-message`, `check_message` stage `conversation`). Their goal and what's in the way go into `notes`: the offer will answer them. When they're interested (they ask about the work, the cost, availability): suggest a 30-minute call (template `suggest-a-call`), without the price in writing. Booked: `update <key> status=meeting next_touch=<call date>`.
 
 ## Offer for one lead (`/leads:offer`)
 
-Only for leads in `warm`, `talking`, `offer_sent` or `meeting` who've shown interest. Use the `offer` skill: `tailor_offer`, the lead's offer in `offers/<lead-key>.md` (edited with the user), the message, `check_message`, then after sending `record_offer` and `update <key> status=offer_sent offer_price=<price> offer_file=offers/<file>`.
+Only for leads in `talking`, `meeting` or `offered` who've shown interest. The offer is presented on a 1:1 call, never in a message. Use the `offer` skill:
+1. Before the call: `tailor_offer` (stage `call`), their offer and the call plan in `offers/<lead-key>.md`, edited with the user.
+2. After the call: `record_offer`, `update <key> status=offered offer_price=<price> offer_file=offers/<file>` (or won, lost, not_interested), then the recap (`tailor_offer` stage `recap`, template `call-recap`, `check_message`).
+3. No decision yet: at most two follow-ups (stage `follow_up`), each adding something new.
 
 ## Today (`/leads:today`)
 
 1. For each workbook in `leads/`: `python3 "$S" due <workbook> --days 0`.
-2. Group by what to do: answer (talking, warm), follow up an offer (offer_sent, at most two follow-ups), engage again (engaging, to_engage), calls (meeting).
-3. For each: the next step and a draft (comment, reply or offer follow-up via the `offer` skill at stage `follow_up`).
+2. Group by what to do: answer (talking, warm), calls to prepare (meeting), follow up after a call (offered, at most two follow-ups), engage again (engaging, to_engage).
+3. For each: the next step and a draft (comment, reply, the call plan, or a follow-up via the `offer` skill at stage `follow_up`).
 
 ## Log outcomes
 
-"Booked a call" → `status=meeting next_touch=<call date>`. "Signed" → `won`. "Not now" → `not_interested` or a later `next_touch`. "Remove me" → the forget workflow.
+"Booked a call" → `status=meeting next_touch=<call date>`, then prepare the offer for it. "Made the offer on the call" → the After the call step of the `offer` skill. "Signed" → `won`. "Not now" → `not_interested` or a later `next_touch`. "Remove me" → the forget workflow.
 
 ## Topics (on demand only)
 
@@ -79,7 +82,7 @@ Only for leads in `warm`, `talking`, `offer_sent` or `meeting` who've shown inte
 
 ## Export for a CRM
 
-`python3 "$S" export <workbook> exports/<name>.csv [--sheet LinkedIn] [--status talking,offer_sent]`. In a plain chat without files, use `export_csv` for download links instead.
+`python3 "$S" export <workbook> exports/<name>.csv [--sheet LinkedIn] [--status talking,meeting,offered]`. In a plain chat without files, use `export_csv` for download links instead.
 
 ## Forget a person
 

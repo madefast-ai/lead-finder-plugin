@@ -12,8 +12,8 @@ Lead Finder never reaches out cold. The user only writes privately to people who
    A few touches over one or two weeks, each one adding something. Never a pitch, a link or "DM me".
 3. **warm**: they engaged back. They replied to a comment, commented on the user's post, reacted, accepted the connection, followed back.
 4. **talking**: a conversation. They messaged the user, asked a question, or asked them to get in touch. Now private messages, DMs and email are fine, and they answer what the lead said.
-5. **offer_sent**: when they're interested (they asked about the work, the price, availability), the user sends their offer (`/leads:offer`).
-6. **meeting**, then **won** or **lost**.
+5. **meeting**: when they're interested (they asked about the work, the cost, availability), the user suggests a short call and they book it. Claude prepares their offer for the call (`/leads:offer`).
+6. **offered**: the user presented the offer on the call. Then the recap, at most two follow-ups, and **won** or **lost**.
 
 Log every touch, theirs and the user's: `workbook.py interact <workbook> <key> --by you|them --channel linkedin|reddit|instagram|email --kind comment|like|connect|reply|message|… [--url <post>] [--note "…"]`. It moves the status along and sets the next touch.
 
@@ -30,13 +30,14 @@ Log every touch, theirs and the user's: `workbook.py interact <workbook> <key> -
 - Answer what they said. Talk about what you do only when they ask.
 - One question at a time, about their goal or what's in the way. Their words are what the offer will answer.
 - No call request in the first reply unless they asked for one.
+- When they're interested (they ask about your work, the cost or availability): answer what you can and suggest a 30-minute call (template `suggest-a-call`). No price in writing: `check_message` flags it.
 
-## The offer
+## The offer, on a call
 
-- Only for leads who are `warm`, `talking` or later, and who've shown interest. Use the `offer` skill.
-- Their goal in their words, what's included for them (with durations), the real price and how they pay, one proof point, the guarantee if there is one, one next step.
-- The anchor, the payment plan and the feature downsell are for the call.
-- After an offer, at most two follow-ups, each adding something new. Then pause or close.
+- Only for leads who are talking with the user and interested. Use the `offer` skill once the call is booked.
+- The offer is presented on the call, never in a message: their goal in their words, the anchor, then what's included for them (with durations), the real price and how they pay, one proof point, the guarantee if there is one. Then stop.
+- After a no: "Is it the total, or paying it all at once?" → the payment plan or the feature downsell → the fallback.
+- After the call: the recap the same day (template `call-recap`), then at most two follow-ups, each adding something new. Then pause or close.
 
 ## Platform notes
 
