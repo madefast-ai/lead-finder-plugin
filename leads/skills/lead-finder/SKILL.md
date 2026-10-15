@@ -11,7 +11,7 @@ Lead Finder finds B2B leads through the user's own Apify account and helps turn 
 
 ## Before anything else
 
-1. Call `my_account`, then `get_offer`: the user's offer is saved on the server. Never ask them to explain their business again when it exists. If the tool doesn't exist, the connector isn't connected: tell the user to open the plugin's Connectors tab (or Customize → Connectors → Add custom connector with `https://leadfinder.madefast.dev/mcp`) and sign in, then stop.
+1. Call `my_account`, then `get_offer`: the user's offer is saved on the server. Never ask them to explain their business again when it exists. If the tool doesn't exist, the connector isn't connected: tell the user to open the plugin's Connectors tab (or More → Customize → Connectors, adding a custom connector with `https://leadfinder.madefast.dev/mcp`) and sign in, then stop.
 2. Handle what it says: waiting for approval (searches won't run yet; setup still works), no Apify token (the account page, or `set_api_key` if they paste it), terms to accept (the link it gives), no `my_profiles` (ask for their LinkedIn link, Reddit username, Instagram handle: `set_my_profiles`). Say **Basic** and **Pro**, never free and paid.
 3. Find the Lead Finder folder: the working folder if it has `offer.md` and `leads/`; otherwise ask where it is, or run the setup workflow.
 

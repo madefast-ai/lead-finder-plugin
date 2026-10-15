@@ -26,7 +26,7 @@ Website and account: **https://leadfinder.madefast.dev**
 
 ### 2. Add the plugin to Claude Desktop
 
-1. Open **Customize → Plugins → Add marketplace → Add from a repository**.
+1. Open **More → Customize → Plugins**, click **+ Add** and choose **Add marketplace → Add from a repository**.
 2. Enter:
    ```
    madefast-ai/lead-finder-plugin
@@ -34,7 +34,7 @@ Website and account: **https://leadfinder.madefast.dev**
 3. Install **Lead Finder**.
 4. Open the plugin's **Connectors** tab, click **Connect** on **Madefast Lead Finder**, and sign in with the same email.
 
-If Connect stays greyed out, add the connector by hand: **Customize → Connectors → Add custom connector**, name it `Madefast Lead Finder`, URL:
+If Connect stays greyed out, add the connector by hand: **More → Customize → Connectors**, add a custom connector named `Madefast Lead Finder` with the URL:
 ```
 https://leadfinder.madefast.dev/mcp
 ```
@@ -61,7 +61,7 @@ Then run `/mcp`, pick **Madefast Lead Finder** and sign in.
 
 ## First run
 
-In Cowork, choose a folder for your leads (an empty one is best), then, in this order:
+In Claude Desktop, switch the box to **Cowork**, click **Project or folder** and add a folder for your leads (**Add folder**; an empty one is best), then, in this order:
 
 | Step | Type | What happens |
 |---|---|---|
@@ -168,12 +168,12 @@ Full terms: [Terms of Service](https://leadfinder.madefast.dev/terms), [Privacy 
 | The check doesn't see reactions to my posts | Tell Claude your LinkedIn profile link once (it saves it with your account). |
 | A search takes a while | Large searches keep running in the background. Ask Claude to check on it. |
 | "Weekly quota used up" | Capacity frees up 7 days after each lead was found. The account page shows when. |
-| The workbook isn't created | The workbook needs Cowork with a folder chosen. In other chats, ask for a CSV export. |
+| The workbook isn't created | The workbook needs Cowork with your folder chosen under **Project or folder**. In other chats, ask for a CSV export. |
 | Commands don't appear | Check the plugin is installed and enabled, then start a new Cowork session. |
 
 ## Updates
 
-New versions arrive through **Customize → Plugins → Check for updates**, or automatically when sync is on. In Claude Code: `/plugin marketplace update leadfinder`.
+New versions arrive when you update the plugin from **Plugins** in Claude Desktop (More → Customize → Plugins), or automatically when sync is on. In Claude Code: `/plugin marketplace update leadfinder`.
 
 ## What's in this repository
 
