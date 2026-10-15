@@ -1,7 +1,7 @@
 {
   "$schema": "https://code.claude.com/schemas/marketplace.json",
-  "name": "madefast",
-  "description": "Madefast plugins for Claude.",
+  "name": "leadfinder",
+  "description": "Madefast Lead Finder for Claude.",
   "owner": {
     "name": "Madefast",
     "url": "https://leadfinder.madefast.dev"
@@ -10,8 +10,7 @@
     {
       "name": "leads",
       "source": "./leads",
-      "description": "Lead Finder: find B2B leads on LinkedIn, Reddit and Instagram, engage with them in public, see who engages back, and prepare the offer for a call when they're interested. Your leads stay in a workbook on your computer.",
-      "version": "2.2.0"
+      "description": "Lead Finder: find B2B leads on LinkedIn, Reddit and Instagram, engage with them in public, see who engages back, and prepare the offer for a call when they're interested. Your leads stay in a workbook on your computer."
     }
   ]
 }

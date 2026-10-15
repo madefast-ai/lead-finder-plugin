@@ -43,7 +43,7 @@ https://leadfinder.madefast.dev/mcp
 
 ```
 /plugin marketplace add madefast-ai/lead-finder-plugin
-/plugin install leads@madefast
+/plugin install leads@leadfinder
 ```
 Then run `/mcp`, pick **Madefast Lead Finder** and sign in.
 
@@ -173,12 +173,12 @@ Full terms: [Terms of Service](https://leadfinder.madefast.dev/terms), [Privacy 
 
 ## Updates
 
-New versions arrive through **Customize → Plugins → Check for updates**, or automatically when sync is on. In Claude Code: `/plugin marketplace update madefast`.
+New versions arrive through **Customize → Plugins → Check for updates**, or automatically when sync is on. In Claude Code: `/plugin marketplace update leadfinder`.
 
 ## What's in this repository
 
 ```
-.claude-plugin/marketplace.json     the marketplace (name: madefast)
+.claude-plugin/marketplace.json     the marketplace (name: leadfinder)
 leads/
   .claude-plugin/plugin.json        the plugin (name: leads)
   .mcp.json                         the Madefast Lead Finder connector
@@ -189,7 +189,7 @@ leads/
                                     the /leads:* commands
 ```
 
-The connector talks to `https://leadfinder.madefast.dev/mcp` and signs you in with OAuth. This repository holds no secrets and no lead data.
+This repository is also the plugin marketplace (`.claude-plugin/marketplace.json`, named `leadfinder`). The connector talks to `https://leadfinder.madefast.dev/mcp` and signs you in with OAuth. This repository holds no secrets and no lead data.
 
 ## Support
 

@@ -131,7 +131,7 @@ One file per template. Frontmatter plus the text, with placeholders:
 ---
 name: LinkedIn comment
 channel: linkedin_comment     # linkedin_comment | linkedin_connect | linkedin_message | reddit_comment | reddit_dm | instagram_comment | instagram_dm | email
-purpose: engage               # engage | conversation | offer | follow_up | call
+purpose: engage               # engage | conversation | call | recap | follow_up
 language: English
 subject:                      # emails only
 source: starter pack          # or: user, or the tool that made it
