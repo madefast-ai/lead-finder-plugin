@@ -113,7 +113,7 @@ Update "Searches that work" and "Learnings" as you go.
 ```markdown
 # Saved topics
 
-Checked only when I ask ("check my topics"), or by a routine.
+Checked only when I ask ("check my topics"), or by a playbook.
 
 ## <Topic name>
 Campaign: <slug>

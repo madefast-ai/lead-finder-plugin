@@ -68,7 +68,7 @@ Only for leads in `talking`, `meeting` or `offered` who've shown interest. The o
 
 ## Topics (on demand only)
 
-1. `topics.md` lists topics with phrases per platform. Check only when asked ("check my topics"), or in a routine.
+1. `topics.md` lists topics with phrases per platform. Check only when asked ("check my topics"), or in a playbook.
 2. Run the searches for the chosen topic(s); people delivered before are hidden automatically.
 3. Treat the results as an inbox: present, the user picks, merge the picked into the topic's campaign workbook as `to_engage`. Update "Last checked".
 

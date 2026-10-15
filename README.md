@@ -143,7 +143,7 @@ Statuses run `new` → `to_engage` → `engaging` → `warm` → `talking` → `
 |---|---|---|
 | New leads per 7 days | 25 | 200 |
 | Every feature above | ✓ | ✓ |
-| Ready-made routines | | ✓ |
+| Ready-made playbooks | | ✓ |
 
 Only new people found by a search count. Research, activity checks, imports and people you've already seen don't. Pro is available only to Pro members of the Skool community; your account page shows how to get it, your plan and what's left this week. Searches and checks use your own Apify credit on both plans.
 
