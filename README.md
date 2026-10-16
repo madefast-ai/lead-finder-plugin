@@ -78,10 +78,10 @@ In Claude Desktop, switch the box to **Cowork**, click **Project or folder** and
 | `/leads:offer-builder` | Build or revise your offer (saved on your account). |
 | `/leads:find` | Find new leads for a campaign and save the ones you keep. |
 | `/leads:engage` | Get today's leads to engage with and a comment for each; log what you did. |
-| `/leads:check` | See who engaged back: replies, comments and reactions on your posts, their new posts. |
+| `/leads:check` | See who engaged back: replies to your comments, comments on your posts and comments where you engaged on LinkedIn, Reddit and Instagram, reactions to your posts on LinkedIn, and their new posts. |
 | `/leads:offer` | For a lead who's interested: suggest a call, prepare their offer for it, then the recap and follow-ups. |
 | `/leads:today` | What's due today: who to answer, calls to prepare, follow-ups after a call, who to engage again. |
-| `/leads:import` | Bring a CSV or Excel file of leads (a CRM export, an old sheet) into a workbook. |
+| `/leads:import` | Bring a CSV or Excel file of leads (a CRM export, an old sheet) into a workbook. Pro only. |
 
 ### Or just ask
 
@@ -102,12 +102,12 @@ In Claude Desktop, switch the box to **Cowork**, click **Project or folder** and
 - Buying signals: LinkedIn posts about the problem, the people commenting on a post, companies hiring for the role you replace, and companies running LinkedIn ads.
 - Reddit posts and comments asking for recommendations, by keyword and subreddit.
 - Instagram accounts by hashtag or keyword.
-- Every lead scored 1 to 10 against your ideal customer, with a one-line reason. People you've already seen stay hidden and never count against your quota again.
+- Every lead scored 1 to 10 against your ideal customer, with a one-line reason. People you've already seen stay hidden for a year and don't count against your quota again.
 
 **Engage**
 - Suggested comments that add something to their post, checked so they never pitch.
 - A log of every interaction, yours and theirs, and the next date to engage.
-- An activity check: their new posts, and whether they commented on or reacted to your LinkedIn posts or replied where you commented.
+- An activity check: their new posts, and whether they commented on your posts, replied to your comments or commented where you did on LinkedIn, Reddit and Instagram, or reacted to your posts on LinkedIn.
 
 **Offer**
 - Your offer, built once with an interview: what's included with durations, the price and terms, real proof, the guarantee, an anchor, a payment plan and a feature downsell.
@@ -142,19 +142,21 @@ Statuses run `new` → `to_engage` → `engaging` → `warm` → `talking` → `
 | | Basic | Pro |
 |---|---|---|
 | New leads per 7 days | 25 | 200 |
-| Every feature above | ✓ | ✓ |
+| Find, engage, check and offer for the leads it finds | ✓ | ✓ |
+| Your own lead lists (import, research, checks, offers) | | ✓ |
+| Saved offers, one per product or segment | 1 | Unlimited |
 | Ready-made playbooks | | ✓ |
 
-Only new people found by a search count. Research, activity checks, imports and people you've already seen don't. Pro is available only to Pro members of the Skool community; your account page shows how to get it, your plan and what's left this week. Searches and checks use your own Apify credit on both plans.
+Only new people found by a search count. Research, activity checks, imports and people you've already seen don't. Importing your own lists, and research, checks and offers for people Lead Finder didn't find for you, are Pro features. One Lead Finder account per Apify token on every plan: a token saved on one account can't be added to another until it's removed there. Pro is available only to Pro members of the Skool community; your account page shows how to get it, your plan and what's left this week. Searches and checks use your own Apify credit on both plans.
 
 ## Privacy and your data
 
 - **Search results** are kept on the Lead Finder server for **12 hours**, then deleted. Keep the leads you want before then.
 - **The leads you keep** live in your folder, on your computer. You're responsible for them: keep them secure, don't share or sell them, and delete people who ask.
-- **People you've already seen** are remembered for a year as coded fingerprints (never names) so they aren't shown or counted again.
+- **People you've already seen** are remembered for a year as coded fingerprints (never names) so they aren't shown or counted again, and, on Basic, to tell which people Lead Finder found for you.
 - **Removal requests:** tell Claude to forget the person. They're deleted from the server and your workbook and never shown to you again.
 - **Your privacy notice:** you collect people's public details, so keep a short privacy notice (a link on your profile or website is enough).
-- **Your Apify token** is stored encrypted and used only to run your searches and checks.
+- **Your Apify token** is stored encrypted (with a keyed fingerprint so it stays on one account) and used only to run your searches and checks.
 
 Full terms: [Terms of Service](https://leadfinder.madefast.dev/terms), [Privacy Policy](https://leadfinder.madefast.dev/privacy), [GDPR and data processing](https://leadfinder.madefast.dev/gdpr).
 
@@ -165,7 +167,7 @@ Full terms: [Terms of Service](https://leadfinder.madefast.dev/terms), [Privacy 
 | **Connect** is greyed out | Add the connector by hand (see Install), then reconnect from the plugin's Connectors tab. |
 | "Your account is waiting for approval" | We approve new accounts by hand; you'll get an email. Your account page shows the status. |
 | "No Apify token" | Add it on your [account page](https://leadfinder.madefast.dev/account). |
-| The check doesn't see reactions to my posts | Tell Claude your LinkedIn profile link once (it saves it with your account). |
+| The check doesn't see comments on my posts or replies to my comments | Tell Claude your LinkedIn profile link, your Reddit username and your Instagram handle once (it saves them with your account). The check needs them to see comments and reactions on your own posts, and replies to your comments on Reddit and Instagram. |
 | A search takes a while | Large searches keep running in the background. Ask Claude to check on it. |
 | "Weekly quota used up" | Capacity frees up 7 days after each lead was found. The account page shows when. |
 | The workbook isn't created | The workbook needs Cowork with your folder chosen under **Project or folder**. In other chats, ask for a CSV export. |

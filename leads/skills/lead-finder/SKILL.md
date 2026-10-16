@@ -13,6 +13,9 @@ Lead Finder finds B2B leads through the user's own Apify account and helps turn 
 
 1. Call `my_account`, then `get_offer`: the user's offer is saved on the server. Never ask them to explain their business again when it exists. If the tool doesn't exist, the connector isn't connected: tell the user to open the plugin's Connectors tab (or More → Customize → Connectors, adding a custom connector with `https://leadfinder.madefast.dev/mcp`) and sign in, then stop.
 2. Handle what it says: waiting for approval (searches won't run yet; setup still works), no Apify token (the account page, or `set_api_key` if they paste it), terms to accept (the link it gives), no `my_profiles` (ask for their LinkedIn link, Reddit username, Instagram handle: `set_my_profiles`). Say **Basic** and **Pro**, never free and paid.
+   - `features.own_leads` false (Basic): `/leads:import` is off, and research, the activity check and the offer work only for people Lead Finder found; when the server skips or refuses someone for that reason, tell the user once that working with your own leads is a Pro feature and move on, never retry with another link.
+   - `features.max_offers` is a number (Basic keeps one saved offer) and `features.offers_saved` has reached it: another offer can't be created; update the saved offer instead, or `delete_offer` first. When `features.max_offers` is null (Pro), there is no cap.
+   - A token refused as already saved on another account: say so once and point at the account page; never suggest another token of the same Apify account.
 3. Find the Lead Finder folder: the working folder if it has `offer.md` and `leads/`; otherwise ask where it is, or run the setup workflow.
 
 ## The folder
@@ -52,7 +55,7 @@ Details for each are in `references/workflows.md`. Load it when you run one.
 - **Offer for one lead** (`/leads:offer`): the `offer` skill, for interested leads only: suggest a call (`status=meeting`), prepare their offer and the call plan in `offers/`, edited with the user. The offer is presented on the call, never in a message. After it: `record_offer`, `status=offered`, the recap and at most two follow-ups.
 - **Today** (`/leads:today`): what's due: answers, calls to prepare, follow-ups after a call, engagement.
 - **Topics**: check the phrases in `topics.md` only when the user asks; results go through the same pick step.
-- **Import** a spreadsheet the user drops in `imports/`, **export** for a CRM into `exports/`.
+- **Import** (Pro) a spreadsheet the user drops in `imports/`, **export** for a CRM into `exports/`.
 - **Forget someone**: `forget_person` on the server and `workbook.py remove` in every workbook in `leads/`.
 
 ## Rules that always apply

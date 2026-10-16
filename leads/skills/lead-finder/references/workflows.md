@@ -33,16 +33,16 @@
 1. Who: the leads in `to_engage`, `engaging` or `warm` whose `next_touch` is today or earlier (`python3 "$S" due <workbook>`), or the ones the user names. A handful at a time (5-10 a day is plenty).
 2. For each, find something to engage with: their latest posts from the row (`recent_posts`, `signal_text`), or fresh ones with `research_lead` (posts) or `check_lead_activity`.
 3. Suggest a genuine comment per lead with `engagement.md` and the templates (`linkedin-comment`, `reddit-comment`, `instagram-comment`), the post's link and why it's worth commenting on. Run `check_message` (stage `engage`) and fix every error. Save it with `update <key> "draft_comment=<text>"`.
-4. The user posts it themselves. When they say "done" (or "I commented on Olivia's post"), log it: `interact <workbook> <key> --by you --channel <platform> --kind comment --url <post link>`.
+4. The user posts it themselves. When they say "done" (or "I commented on Olivia's post"), log it: `interact <workbook> <key> --by you --channel <platform> --kind comment --url <post link>`. On LinkedIn, ask for the link to their own comment (Copy link to comment) and log that instead of the post link when they have it: it lets the check see replies to that comment.
 5. After 3-4 comments over a week or two, on LinkedIn suggest a connection request (`connection-request` template, or no note).
 
 ## Check who engaged back (`/leads:check`)
 
 1. The leads in `engaging` (and `warm` leads with no conversation yet), up to 10 at a time.
-2. `check_lead_activity` with their profile links, `since_days` (7 by default) and `engaged_posts`: the post links from their `interactions` log lines that start with `you:`.
-3. For each lead with `engaged_back`: log it (`interact … --by them --kind reply|comment|reaction`), so they become `warm`. Tell the user what they did.
+2. `check_lead_activity` with their profile links, `since_days` (7 by default) and `engaged_posts`: the post links from their `interactions` log lines that start with `you:`, and the links to the user's own comments when they were logged (LinkedIn: Copy link to comment).
+3. For each lead with `engaged_back`: log it (`interact … --by them --kind reply|comment|reaction`, the kind matching what the result says), so they become `warm`. Tell the user what they did and where.
 4. For leads with `new_posts`: suggest the next comment (the Engage workflow).
-5. Ask the user about anything the check can't see: "Did anyone message you, accept a connection or reply to a DM?" Log what they say (`--kind message` makes the lead `talking`).
+5. Ask the user about anything the check can't see: "Did anyone message you, accept a connection, reply to a DM or like your Instagram post?" Log what they say (`--kind message` makes the lead `talking`).
 6. Leads with no response after 4-5 touches over three weeks: suggest pausing them (a later `next_touch`) or `lost`.
 
 ## When someone engages back or writes
@@ -74,11 +74,12 @@ Only for leads in `talking`, `meeting` or `offered` who've shown interest. The o
 
 ## Import a spreadsheet
 
-1. The user drops a CSV or XLSX in `imports/` (or points to one).
-2. Ask: add to an existing campaign workbook, or create a new campaign?
-3. `python3 "$S" import <workbook> <file>`; add `--sheet Reddit|Instagram|Companies` when the file is clearly one platform.
-4. Report added, updated and skipped rows. Imported rows don't count against the quota.
-5. Offer research for imported leads that lack details.
+1. `my_account` first. If `features.own_leads` is false (Basic), say that importing your own lead lists is a Pro feature and that on Basic Lead Finder works with the people it finds for you, point at the account page (`account_page`; the `pro` line says how to get Pro), and stop: don't read the file and don't run `import`. If `my_account` doesn't exist, the connector isn't connected (see SKILL.md) and stop.
+2. The user drops a CSV or XLSX in `imports/` (or points to one).
+3. Ask: add to an existing campaign workbook, or create a new campaign?
+4. `python3 "$S" import <workbook> <file>`; add `--sheet Reddit|Instagram|Companies` when the file is clearly one platform.
+5. Report added, updated and skipped rows. Imported rows don't count against the quota.
+6. Offer research for imported leads that lack details.
 
 ## Export for a CRM
 

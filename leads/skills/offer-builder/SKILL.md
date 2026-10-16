@@ -14,7 +14,7 @@ Tools: `build_offer` (the steps, what's saved, what's missing, a value check), `
 
 ## How to run it
 
-1. Call `build_offer`. If an offer exists, show its name and the value check, then continue with the first step that has missing fields. A second offer (another product or segment) gets a new name.
+1. Call `build_offer`. If an offer exists, show its name and the value check, then continue with the first step that has missing fields. A second offer (another product or segment) gets a new name; check `my_account` first: when `features.max_offers` is a number and `features.offers_saved` has reached it (Basic keeps one saved offer; Pro has no cap), say so and offer to update the saved offer or delete it, never start another interview.
 2. Work in the order below, **one question at a time**, in plain words. Skip what's already saved; ask only for what's missing. Save each answer with `save_offer` right away (only the fields you have).
 3. At the end: the value check, said plainly, then the Markdown. In Cowork, write it to `offer.md` (replace the file; it's a mirror).
 

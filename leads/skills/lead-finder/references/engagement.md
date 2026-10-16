@@ -15,7 +15,7 @@ Lead Finder never reaches out cold. The user only writes privately to people who
 5. **meeting**: when they're interested (they asked about the work, the cost, availability), the user suggests a short call and they book it. Claude prepares their offer for the call (`/leads:offer`).
 6. **offered**: the user presented the offer on the call. Then the recap, at most two follow-ups, and **won** or **lost**.
 
-Log every touch, theirs and the user's: `workbook.py interact <workbook> <key> --by you|them --channel linkedin|reddit|instagram|email --kind comment|like|connect|reply|message|… [--url <post>] [--note "…"]`. It moves the status along and sets the next touch.
+Log every touch, theirs and the user's: `workbook.py interact <workbook> <key> --by you|them --channel linkedin|reddit|instagram|email --kind comment|like|connect|reply|message|… [--url <post>] [--note "…"]`. It moves the status along and sets the next touch. Log the post link with every touch; on LinkedIn, when you commented, prefer the link to your own comment (Copy link to comment): it lets the check see replies to that comment.
 
 ## Writing comments
 
@@ -43,7 +43,7 @@ Log every touch, theirs and the user's: `workbook.py interact <workbook> <key> -
 
 - LinkedIn: comments on their posts are seen by them and their network; reply to their replies. A connection request after a few comments is natural; keep the note empty or about the conversation.
 - Reddit: many subreddits ban self-promotion. A helpful answer is the only engagement; DM only if they asked you to.
-- Instagram: comment on their posts and stories' posts; reply when they reply. DM only when they messaged first or invited it.
+- Instagram: comment on their posts and stories' posts; reply when they reply. DM only when they messaged first or invited it. The check sees comments and replies on your posts and on posts where you commented (replies need a paid Apify plan), not likes or DMs.
 
 ## Writing rules for every draft
 
