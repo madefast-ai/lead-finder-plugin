@@ -19,11 +19,12 @@ Log every touch, theirs and the user's: `workbook.py interact <workbook> <key> -
 
 ## Writing comments
 
+- Answer what they asked for first. Write down for yourself what the post asks (a recommendation, a fix, how others do it, an opinion; on Reddit it's in the lead's `score_reason`) and put the answer in the first sentence. For a recommendation, give the way to choose (what to look for, what to avoid), never the user's own name.
 - React to one specific thing they said, and add something: a point, a short example from the user's own work, or a real question.
 - Short: LinkedIn under 80 words, Instagram under 30, Reddit as long as the answer needs (about 180 words at most).
 - Never: a pitch, an offer, a price, a link, "DM me", "let's connect to talk business", praise with nothing in it ("Great post!").
 - Write like the user writes. Plain words, no buzzwords.
-- Run `check_message` (stage `engage`) and fix every error before showing a draft.
+- Run `check_message` (stage `engage`) and fix every error, and the warnings too, before showing a draft.
 
 ## When they write to you
 

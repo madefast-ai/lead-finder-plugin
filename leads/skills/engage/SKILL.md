@@ -6,6 +6,6 @@ user-invocable: true
 
 Run the **Engage** workflow of the `lead-finder` skill (read its SKILL.md, `references/workflows.md` and `references/engagement.md`).
 
-Pick 5-10 leads in `to_engage`, `engaging` or `warm` whose next touch is due (or the ones the user names). For each: one post worth engaging with (link, what it's about) and a suggested comment that adds something, never a pitch. Run `check_message` with stage `engage` and fix every error. Save drafts with `workbook.py update <key> "draft_comment=…"`.
+Pick 5-10 leads in `to_engage`, `engaging` or `warm` whose next touch is due (or the ones the user names). For each: one post worth engaging with (link, what it's about) and a suggested comment that answers what they asked for first and adds something, never a pitch. Run `check_message` with stage `engage` and fix every error and warning. Save drafts with `workbook.py update <key> "draft_comment=…"`.
 
 The user posts the comments themselves. When they say they did ("done", "commented on Olivia's"), log each one: `workbook.py interact <workbook> <key> --by you --channel <platform> --kind comment --url <post link>`. On LinkedIn, prefer the link to the user's own comment (Copy link to comment) when they have it, so the check sees replies to that comment. After 3-4 comments on LinkedIn, suggest a connection request without a pitch.

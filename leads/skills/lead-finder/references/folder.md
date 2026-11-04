@@ -21,9 +21,13 @@ templates/
   call-recap.md
 leads/
   <campaign-slug>.xlsx
+problems/
+  YYYY-MM-DD.md        the roundups of what came up most on Reddit, one file per run
 imports/
 exports/
 ```
+
+`problems/` is created by `/leads:problems` on its first run; setup doesn't create it.
 
 Slugs: lowercase, words joined with `-`, e.g. `uk-dtc-fashion`. The workbook has the same slug as its campaign.
 
@@ -37,7 +41,8 @@ Write this once (adapt the names):
 This folder is your lead database. Claude reads and updates it with the Lead Finder plugin.
 
 - offer.md: what you sell. campaigns/: who you target. topics.md: phrases to check on demand. offers/: the offer for each lead you have a call with.
-- leads/*.xlsx: one workbook per campaign. Edit status, notes and drafts freely; Summary, Next touches and Pipeline are rebuilt automatically.
+- leads/*.xlsx: one workbook per campaign. Finds wait in the To review sheet until you mark keep or skip. The Sources sheet shows how each subreddit, bio word and search did. The Problems sheet keeps the problem, the ask and a short phrase of every fitting Reddit post, without names or links. Edit status, notes and drafts freely; Summary, Next touches and Pipeline are rebuilt automatically.
+- problems/: the roundups of the problems your market describes on Reddit, for your own content.
 - Engage in public first (comments, reactions). Write privately only to people who've interacted with you.
 - The Lead Finder server keeps search results for 12 hours only. What you keep lives here, and is your responsibility: keep it secure, delete people who ask, don't share it.
 ```
@@ -88,16 +93,46 @@ Workbook: leads/<slug>.xlsx
 Status: active
 
 ## Ideal customer
-Roles, seniority, company size, industries, locations. Who to exclude (customers, competitors, partners).
+Who they are in one or two lines: the role that signs, the company type, what they want. Who to exclude (customers, competitors, partners).
 
-## Where they talk
-The topics they post about, the subreddits and hashtags they use: where to engage with them.
+## Platforms
+Only the platforms listed here are searched for this campaign. A campaign file without this section is searched on all three.
+
+### LinkedIn
+Finds people directly, by role and company.
+- Job titles: Head of Ecommerce, Ecommerce Director, Founder
+- Industries: Retail, Apparel and Fashion
+- Company size: 11-50, 51-200
+- Locations: United Kingdom
+
+### Reddit
+Finds posts where someone describes a problem you solve, so you can answer in the thread. Their words here also teach you how they talk.
+- Problems, in their words: "site crashed on drop day", "shopify checkout slow", "lost sales during the launch", "store can't handle traffic" (as many as you can; never job titles)
+- Looking for, when they post: a fix before the next drop, a developer or agency recommendation, someone who had the same problem
+- Subreddits (approved, checked 2026-11-03, topics: shopify, ecommerce, small online shops; re-check monthly with /leads:update):
+  - r/dropdayshops: 42k members, 1.1k weekly visitors, 160 weekly contributions, newest post 3 hours ago. Promotion: "No self-promotion or store links" (rule 2). DMs: not mentioned.
+  - r/indiebrandowners: 18k members, 600 weekly visitors, 70 weekly contributions, newest post 9 hours ago. Promotion: not mentioned. DMs: "Don't message members to sell" (rule 5).
+
+### Instagram
+Finds accounts whose bio contains one of the bio words (a web search of Instagram profiles, then each profile read in full). Bio words: short phrases people write in their bio, in their language, with plural or spelling variants as their own entries.
+- Bio words: "slow fashion", "small batch", "independent label"
+- Paused bio words: "drops" (paused 2026-11-10: 1 good lead from 22 accounts in 7 days)
+- A good bio shows: a brand selling its own products online, launches in drops, a shop link
+
+## Disqualifiers
+Rules that rule a lead out, applied in every score: a match scores 1 or 2 and the reason names the rule. Fit only: role, company, business model, need; never age, gender, nationality, ethnicity, religion, health, family status or photos.
+- Sells on marketplaces only, no own store
+- Agencies and freelancers who serve brands
+- Fewer than 3 people
 
 ## Searches that work
 - LinkedIn people: titles [...], seniority [...], locations [...], industries [...]
 - LinkedIn posts: "phrase one", "phrase two"
 - Reddit: r/<sub>: "phrase"
 - Instagram: #hashtag, "keywords"
+
+## Searches that didn't work
+- LinkedIn people: titles [...], locations [...] (retired 2026-11-10: 1 good lead from 15 results in 7 days)
 
 ## Exclude
 Company links or names never to engage with.
@@ -106,7 +141,15 @@ Company links or names never to engage with.
 What the user marked as good or bad fits, what got people to engage back, and why (use it in later scores and suggestions).
 ```
 
-Update "Searches that work" and "Learnings" as you go.
+Update "Searches that work" and "Learnings" as you go; on Reddit, add the phrases from good posts to "Problems, in their words" (`/leads:problems` offers the ones its roundup found missing, added on the user's yes). The Reddit phrases are what Claude judges posts against in the daily scan, not search terms. `/leads:update` changes Platforms and Disqualifiers.
+
+The Subreddits block holds only subreddits the user approved after the subreddit check, one line each with the figures, the promotion and DM rules in short (quoted, never paraphrased) and the date; an entry can end with `(paused YYYY-MM-DD: reason)` and is then left out of searches until the next re-check. An older one-line `- Subreddits: r/a, r/b` is unchecked: offer `check_subreddits` before searching, and `/leads:update` turns it into the block. A subreddit under the stop rule (10 or more posts, fewer than 3 good leads in 7 days, from `sources report`) is paused with the same marker, for example `(paused 2026-11-10: 1 good lead from 240 posts in 7 days)`, or removed, on the user's answer.
+
+`Paused bio words` (optional, in the Instagram section) holds the bio words paused under the stop rule on the user's yes, each with the date and the counts; they are left out of searches until the user moves one back to Bio words with `/leads:update`. A campaign file without the line has no paused words.
+
+`## Searches that didn't work` lists the searches the stop rule retired, one line each with the date, results and good leads; the find commands add to it on the user's yes, like Learnings, and never run a search listed there as it is.
+
+Older campaign files may have a "Where they talk" section and no Platforms section: read "Where they talk" as before, search all three platforms, and use "Ideal customer" as the LinkedIn details until the user runs `/leads:update`.
 
 ## topics.md
 
